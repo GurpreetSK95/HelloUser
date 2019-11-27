@@ -46,4 +46,27 @@ class GreetingModelTest {
                 )
                 .assertNotTerminated()
     }
+
+    @Test
+    fun `greet unknown user when input is empty`() {
+        val lifecycle = PublishRelay.create<MviLifecycle>()
+        val typingIntention = PublishRelay.create<String>()
+
+        val observer = GreetingModel
+                .bind(lifecycle, typingIntention)
+                .test()
+
+        lifecycle.accept(MviLifecycle.CREATED)
+        typingIntention.accept("G")
+        typingIntention.accept("")
+
+        observer
+                .assertNoErrors()
+                .assertValues(
+                        GreetingState(""),
+                        GreetingState("G"),
+                        GreetingState("")
+                )
+                .assertNotTerminated()
+    }
 }
