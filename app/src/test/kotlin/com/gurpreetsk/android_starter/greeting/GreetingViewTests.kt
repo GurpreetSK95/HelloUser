@@ -18,4 +18,12 @@ class GreetingViewTests {
 
         verify(view).renderUnknownGreeting()
     }
+
+    @Test
+    fun `greet known user when name is input`() {
+        val name = "Gurpreet"
+        view.render(GreetingState(name))
+
+        verify(view).greetUser(name)
+    }
 }
