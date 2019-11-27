@@ -2,71 +2,60 @@ package com.gurpreetsk.android_starter.greeting
 
 import com.gurpreetsk.android_starter.base.MviLifecycle
 import com.jakewharton.rxrelay2.PublishRelay
+import io.reactivex.observers.TestObserver
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 
 class GreetingModelTest {
-    @Test
-    fun `emit initial state on lifecycle created`() {
-        val lifecycle = PublishRelay.create<MviLifecycle>()
-        val typingIntention = PublishRelay.create<String>()
+    private val lifecycle = PublishRelay.create<MviLifecycle>()
+    private val typingIntention = PublishRelay.create<String>()
 
-        val observer = GreetingModel
+    private val observer by lazy {
+        GreetingModel
                 .bind(lifecycle, typingIntention)
                 .test()
+    }
 
+    @Test
+    fun `emit initial state on lifecycle created`() {
         lifecycle.accept(MviLifecycle.CREATED)
 
-        observer
-                .assertNoErrors()
-                .assertValues(GreetingState(""))
-                .assertNotTerminated()
+        observer.assertValues(GreetingState(""))
     }
 
     @Test
     fun `greet user when input is not empty`() {
-        val lifecycle = PublishRelay.create<MviLifecycle>()
-        val typingIntention = PublishRelay.create<String>()
-
-        val observer = GreetingModel
-                .bind(lifecycle, typingIntention)
-                .test()
-
         lifecycle.accept(MviLifecycle.CREATED)
         typingIntention.accept("G")
         typingIntention.accept("Gu")
         typingIntention.accept("Gur")
 
-        observer
-                .assertNoErrors()
-                .assertValues(
-                        GreetingState(""),
-                        GreetingState("G"),
-                        GreetingState("Gu"),
-                        GreetingState("Gur")
-                )
-                .assertNotTerminated()
+        observer.assertValues(
+                GreetingState(""),
+                GreetingState("G"),
+                GreetingState("Gu"),
+                GreetingState("Gur")
+        )
     }
 
     @Test
     fun `greet unknown user when input is empty`() {
-        val lifecycle = PublishRelay.create<MviLifecycle>()
-        val typingIntention = PublishRelay.create<String>()
-
-        val observer = GreetingModel
-                .bind(lifecycle, typingIntention)
-                .test()
-
         lifecycle.accept(MviLifecycle.CREATED)
         typingIntention.accept("G")
         typingIntention.accept("")
 
+        observer.assertValues(
+                GreetingState(""),
+                GreetingState("G"),
+                GreetingState("")
+        )
+    }
+
+    @After
+    fun teardown() {
         observer
                 .assertNoErrors()
-                .assertValues(
-                        GreetingState(""),
-                        GreetingState("G"),
-                        GreetingState("")
-                )
                 .assertNotTerminated()
     }
 }
