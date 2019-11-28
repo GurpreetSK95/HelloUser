@@ -1,10 +1,10 @@
-# android-starter
-Base setup for most of my android projects.
+# Hello User
+Super basic project describing concepts of MVI and state management and how-to implement them in one of the many possible ways.
 
 License
 ---------------------
 
-    Copyright 2018 Gurpreet Singh
+    Copyright 2019 Gurpreet Singh
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
